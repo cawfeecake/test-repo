@@ -1,0 +1,35 @@
+---
+name: Mock build and deploy to 'shared' environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      SLEEP_DURATION:
+        description: how long the mock build step should sleep for (in seconds)
+        type: string
+        required: true
+        default: 5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - env:
+          SLEEP_DURATION: ${{ inputs.SLEEP_DURATION }}
+        run: |
+          sleep $SLEEP_DURATION
+
+  deploy:
+    needs:
+      - build
+    environment: shared
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - run: |
+          echo 'Deployed to shared environment!'
